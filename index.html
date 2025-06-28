@@ -37,6 +37,18 @@
         }
       });
     }
+
+    const querySnapshot = await getDocs(collection(db, "eczane"));
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+          if (data.latitude && data.longitude) {
+          new google.maps.Marker({
+            position: { lat: data.latitude, lng: data.longitude },
+            map: map,
+      title: data.ad,
+    });
+  }
+});
   </script>
 
   <script async
