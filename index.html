@@ -3,9 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <title>Google Maps + Firebase</title>
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+
+  <!-- Tarayıcıya "önbellek yapma" emri -->
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <style>
     #map {
       height: 100vh;
@@ -16,15 +20,12 @@
 <body>
   <div id="map"></div>
 
-  <!-- Global tanımlanmış initMap fonksiyonu -->
+  <!-- initMap fonksiyonunu global tanımlarız -->
   <script>
-    window.initMap = function () {
-      // Firebase kodları modülde, burası sadece boş fonksiyon gibi başlatılıyor
-      // Asıl içeriği modülde dışarı aktaracağız
-    }
+    window.initMap = () => {}; // Placeholder, gerçek içerik aşağıda yüklenecek
   </script>
 
-  <!-- Firebase ile initMap'in içini modülde doldur -->
+  <!-- Firebase ve gerçek initMap içeriği -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -41,7 +42,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Harita fonksiyonunu global scope'a dışarıdan doldur
+    // Gerçek initMap fonksiyonunu yeniden yazarız
     window.initMap = async function () {
       const map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: 41.0082, lng: 28.9784 },
@@ -62,9 +63,9 @@
     };
   </script>
 
-  <!-- Google Maps API yükleniyor -->
+  <!-- Google Maps API - anti-cache parametresi eklendi -->
   <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAORZYCOQPieEmn-JJrjQ0ZWT9ctOnFW0g&callback=initMap&v=weekly"
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAORZYCOQPieEmn-JJrjQ0ZWT9ctOnFW0g&callback=initMap&v=weekly&nocache=1"
     async defer>
   </script>
 </body>
