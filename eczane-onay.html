@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eczane Onay</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      text-align: center;
+      background: #f7f7f7;
+    }
+    button {
+      font-size: 1.2rem;
+      margin: 1rem;
+      padding: 1rem 2rem;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    // Placeholder to avoid ReferenceError before script module loads
+    window.onayla = function() {
+      alert("Veriler henüz yüklenmedi. Lütfen sayfayı tekrar deneyin.");
+    };
+  </script>
+</head>
+<body>
+  <h2 id="isim">Eczane yükleniyor...</h2>
+  <p>Bu akşam nöbetçi olduğunuz görünmektedir. Bilgiyi onaylıyor musunuz?</p>
+  <button onclick="onayla(true)" style="background: #4CAF50; color: white;">Evet, onaylıyorum</button>
+  <button onclick="onayla(false)" style="background: #f44336; color: white;">Hayır, yanlış bilgi</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAORZYCOQPieEmn-JJrjQ0ZWT9ctOnFW0g",
+      authDomain: "pharmacy-25c24.firebaseapp.com",
+      projectId: "pharmacy-25c24",
+      storageBucket: "pharmacy-25c24.appspot.com",
+      messagingSenderId: "720019078107",
+      appId: "1:720019078107:web:b93fa68eaa65e0a56285fe"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get("id");
+
+    const docRef = doc(db, "eczane", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      document.getElementById("isim").textContent = docSnap.data().isim;
+    } else {
+      document.getElementById("isim").textContent = "Eczane bulunamadı.";
+    }
+
+    window.onayla = async function (durum) {
+      await updateDoc(docRef, { onay: durum });
+      alert("Teşekkürler, onayınız kaydedildi.");
+      window.location.reload();
+    };
+  </script>
+</body>
+</html>
