@@ -48,15 +48,24 @@
         center: { lat: 41.0082, lng: 28.9784 },
         zoom: 12,
       });
-
+          
       const querySnapshot = await getDocs(collection(db, "eczane"));
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         if (data.latitude && data.longitude) {
+          let iconUrl;
+        if (data.nobet && data.onay) {
+  iconUrl = "http://maps.google.com/mapfiles/ms/icons/green-dot.png";
+} else if (data.nobet && !data.onay) {
+  iconUrl = "http://maps.google.com/mapfiles/ms/icons/orange-dot.png";
+} else {
+  iconUrl = "http://maps.google.com/mapfiles/ms/icons/red-dot.png";
+}
           new google.maps.Marker({
             position: { lat: data.latitude, lng: data.longitude },
             map: map,
             title: data.isim,
+            icon: iconUrl,
           });
         }
       });
