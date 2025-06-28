@@ -3,12 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <title>Google Maps + Firebase</title>
-  
-  <!-- Önbelleği kır -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  
   <style>
     #map {
       height: 100vh;
@@ -19,7 +16,15 @@
 <body>
   <div id="map"></div>
 
-  <!-- Firebase + initMap -->
+  <!-- Global tanımlanmış initMap fonksiyonu -->
+  <script>
+    window.initMap = function () {
+      // Firebase kodları modülde, burası sadece boş fonksiyon gibi başlatılıyor
+      // Asıl içeriği modülde dışarı aktaracağız
+    }
+  </script>
+
+  <!-- Firebase ile initMap'in içini modülde doldur -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -36,7 +41,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Harita fonksiyonunu global alana atıyoruz
+    // Harita fonksiyonunu global scope'a dışarıdan doldur
     window.initMap = async function () {
       const map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: 41.0082, lng: 28.9784 },
@@ -57,7 +62,7 @@
     };
   </script>
 
-  <!-- Google Maps çağrısı (async + global callback) -->
+  <!-- Google Maps API yükleniyor -->
   <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAORZYCOQPieEmn-JJrjQ0ZWT9ctOnFW0g&callback=initMap&v=weekly"
     async defer>
