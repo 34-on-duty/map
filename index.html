@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Google Maps Demo</title>
+  <title>Google Maps + Firebase</title>
   <style>
     #map {
       height: 100vh;
@@ -13,46 +13,48 @@
 <body>
   <div id="map"></div>
 
-  <script>
-    let map;
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    function initMap() {
-      map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 41.0082, lng: 28.9784 }, // İstanbul
+    const firebaseConfig = {
+      apiKey: "AIzaSyAORZYCOQPieEmn-JJrjQ0ZWT9ctOnFW0g",
+      authDomain: "pharmacy-25c24.firebaseapp.com",
+      projectId: "pharmacy-25c24",
+      storageBucket: "pharmacy-25c24.appspot.com",
+      messagingSenderId: "720019078107",
+      appId: "1:720019078107:web:b93fa68eaa65e0a56285fe"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.initMap = async function () {
+      const map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 41.0082, lng: 28.9784 },
         zoom: 12,
       });
 
-      const geocoder = new google.maps.Geocoder();
-
-      geocoder.geocode({ address: "Kadıköy, İstanbul" }, (results, status) => {
-        if (status === "OK") {
-          const location = results[0].geometry.location;
-          new google.maps.Marker({
-            map: map,
-            position: location,
-          });
-          map.setCenter(location);
-        } else {
-          alert("Geocode başarısız: " + status);
-        }
-      });
-    }
-
-    const querySnapshot = await getDocs(collection(db, "eczane"));
+      const querySnapshot = await getDocs(collection(db, "eczane"));
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-          if (data.latitude && data.longitude) {
+        console.log(data);  // Veriyi görmek için
+
+        if (data.latitude && data.longitude) {
           new google.maps.Marker({
             position: { lat: data.latitude, lng: data.longitude },
             map: map,
-      title: data.ad,
-    });
-  }
-});
+            title: data.ad,
+          });
+        }
+      });
+    };
   </script>
 
-  <script async
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAORZYCOQPieEmn-JJrjQ0ZWT9ctOnFW0g&callback=initMap">
+  <!-- Google Maps -->
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAORZYCOQPieEmn-JJrjQ0ZWT9ctOnFW0g&callback=initMap"
+    async defer>
   </script>
 </body>
 </html>
