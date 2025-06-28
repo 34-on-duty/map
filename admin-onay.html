@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eczane Admin Paneli</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f0f0f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #f9f9f9;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      margin-right: 0.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .yes { background-color: #4CAF50; color: white; }
+    .no { background-color: #f44336; color: white; }
+  </style>
+</head>
+<body>
+  <h1>Eczane Onay Paneli</h1>
+  <table id="eczaneTable">
+    <thead>
+      <tr>
+        <th>İsim</th>
+        <th>İlçe</th>
+        <th>Onay Durumu</th>
+        <th>İşlem</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Firebase'den gelen veriler burada listelenecek -->
+    </tbody>
+  </table>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAORZYCOQPieEmn-JJrjQ0ZWT9ctOnFW0g",
+      authDomain: "pharmacy-25c24.firebaseapp.com",
+      projectId: "pharmacy-25c24",
+      storageBucket: "pharmacy-25c24.appspot.com",
+      messagingSenderId: "720019078107",
+      appId: "1:720019078107:web:b93fa68eaa65e0a56285fe"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const tableBody = document.querySelector("#eczaneTable tbody");
+
+    const snapshot = await getDocs(collection(db, "eczane"));
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${data.isim}</td>
+        <td>${data.ilce}</td>
+        <td>${data.onay ? '✔️' : '❌'}</td>
+        <td>
+          <button class="yes" onclick="onayVer('${docSnap.id}', true)">Onayla</button>
+          <button class="no" onclick="onayVer('${docSnap.id}', false)">Reddet</button>
+        </td>
+      `;
+      tableBody.appendChild(row);
+    });
+
+    window.onayVer = async function (id, durum) {
+      const ref = doc(db, "eczane", id);
+      await updateDoc(ref, { onay: durum });
+      alert("Güncellendi");
+      location.reload();
+    }
+  </script>
+</body>
+</html>
